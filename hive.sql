@@ -24,6 +24,18 @@ location '/user/lsj3272_nyu_edu/shared/reviews/nyc_reviews.csv'
 tblproperties("skip.header.line.count"="1");
 --------------------------
 
+-- Reviews average Table --
+create external table review_average_by_category (
+    zip int,
+    year int,
+    category string,
+    avg_rating float
+)
+row format delimited fields terminated by ','
+location '/user/lsj3272_nyu_edu/shared/reviews/review_average_by_category.csv'
+tblproperties("skip.header.line.count"="1");
+--------------------------
+
 -- Property Valuation Table --
 create external table property_valuation (
     BOROUGH string,
@@ -66,3 +78,47 @@ location '/user/lsj3272_nyu_edu/shared/MTARidership'
 tblproperties("skip.header.line.count"="1");
 --------------------------
 
+-- Complaints Table --
+create external table complaints (
+    cmplnt_num string,
+    cmplnt_fr_dt date,
+    cmplnt_fr_tm string,
+    cmplnt_to_dt date,
+    cmplnt_to_tm string,
+    rpt_dt date,
+    ofns_desc string,
+    law_cat_cd string,
+    boro_nm string,
+    susp_age_group string,
+    susp_race string,
+    susp_sex string,
+    latitude float,
+    longitude float,
+    vic_age_group string,
+    vic_race string,
+    vic_sex string,
+    zipcode int
+)
+row format delimited fields terminated by ','
+location '/user/lsj3272_nyu_edu/shared/complaints_comma_escaped'
+tblproperties("skip.header.line.count"="1");
+--------------------------
+
+
+-- Relevant Queries --
+-- 1. Find Pearon's correlation between total complaints and another field of your choice
+SELECT
+    corr(a.avg_rating, b.total_complaints) AS correlation_avg_review_complaints
+FROM
+    total_review_by_zip a
+JOIN
+    total_complaints_by_zip b
+ON
+    a.zip = b.zipcode;
+
+CREATE TABLE total_review_by_zip
+AS
+SELECT zip,
+       AVG(avg_rating) AS avg_rating
+FROM review_average_by_category
+GROUP BY zip;
