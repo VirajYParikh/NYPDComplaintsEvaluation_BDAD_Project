@@ -52,7 +52,7 @@ create external table property_valuation (
     NUM_BLDGS int,
     EXTRACRDT string,
     BLD_STORY int,
-    UNITS int,
+    UNITS double,
     GROSS_SQFT int
 )
 row format delimited fields terminated by ','
